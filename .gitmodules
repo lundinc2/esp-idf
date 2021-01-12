@@ -86,3 +86,6 @@
 [submodule "examples/peripherals/secure_element/atecc608_ecdsa/components/esp-cryptoauthlib"]
 	path = examples/peripherals/secure_element/atecc608_ecdsa/components/esp-cryptoauthlib
 	url = ../../espressif/esp-cryptoauthlib.git
+[submodule "examples/get-started/hello_world/components/freertos_posix/Lab-Project-FreeRTOS-POSIX"]
+	path = examples/get-started/hello_world/components/freertos_posix/Lab-Project-FreeRTOS-POSIX
+	url = https://github.com/lundinc2/Lab-Project-FreeRTOS-POSIX.git

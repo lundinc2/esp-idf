@@ -230,8 +230,14 @@ typedef struct tskTaskControlBlock
 	#if( tskSTATIC_AND_DYNAMIC_ALLOCATION_POSSIBLE != 0 )
 		uint8_t	ucStaticallyAllocated; 		/*< Set to pdTRUE if the task is a statically allocated to ensure no attempt is made to free the memory. */
 	#endif
-
+    #if ( configUSE_POSIX_ERRNO == 1 )
+        int iTaskErrno;
+    #endif
 } tskTCB;
+
+#if ( configUSE_POSIX_ERRNO == 1 )
+    int FreeRTOS_errno = 0;
+#endif
 
 /* The old tskTCB name is maintained above then typedefed to the new TCB_t name
 below to enable the use of older kernel aware debuggers. */
@@ -2768,6 +2774,12 @@ void vTaskSwitchContext( void )
 		/* Check for stack overflow, if configured. */
 		taskFIRST_CHECK_FOR_STACK_OVERFLOW();
 		taskSECOND_CHECK_FOR_STACK_OVERFLOW();
+         /* Before the currently running task is switched out, save its errno. */
+         #if( configUSE_POSIX_ERRNO == 1 )
+         {
+             pxCurrentTCB[ xPortGetCoreID() ]->iTaskErrno = FreeRTOS_errno;
+         }
+         #endif
 
 		/* Select a new task to run */
 
@@ -2873,6 +2885,12 @@ void vTaskSwitchContext( void )
 		taskSELECT_HIGHEST_PRIORITY_TASK();
 #endif
 		traceTASK_SWITCHED_IN();
+        /* After the new task is switched in, update the global errno. */
+#if( configUSE_POSIX_ERRNO == 1 )
+        {
+            FreeRTOS_errno = pxCurrentTCB[ xPortGetCoreID() ]->iTaskErrno;
+        }
+#endif
         xSwitchingContext[ xPortGetCoreID() ] = pdFALSE;
 
 		//Exit critical region manually as well: release the mux now, interrupts will be re-enabled when we

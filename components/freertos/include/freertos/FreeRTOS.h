@@ -945,6 +945,9 @@ typedef struct xSTATIC_TCB
 		 || ( portUSING_MPU_WRAPPERS == 1 ) )
 		uint8_t			uxDummy20;
 	#endif
+	#if( configUSE_POSIX_ERRNO == 1 )
+		int			    ulDummy21;
+	#endif
 
 } StaticTask_t;
 
